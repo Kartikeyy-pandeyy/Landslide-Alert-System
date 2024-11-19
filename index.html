@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather and Landslide Prediction</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 36px;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 500px;
+            margin: 20px;
+            text-align: center;
+        }
+
+        select, button, input {
+            padding: 12px;
+            width: 90%;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #0072ff;
+            background-color: #fff;
+            font-size: 16px;
+        }
+        select{
+            width: 95%;
+        }
+
+        button {
+            background-color: #0072ff;
+            color: #fff;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #005bb5;
+        }
+
+        #weatherData, #result {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Landslide Risk Alert</h1>
+    <div class="container">
+        <!-- Weather Fetcher -->
+        <div class="card">
+            <h2>Weather Watcher</h2>
+            <select id="locationSelect">
+                <option value="">Select a city</option>
+                <option value="Dehradun">Dehradun</option>
+                <option value="Mussoorie">Mussoorie</option>
+                <option value="Haridwar">Haridwar</option>
+                <option value="Rishikesh">Rishikesh</option>
+                <option value="Kedarnath">Kedarnath</option>
+                <option value="Badrinath">Badrinath</option>
+                <option value="Joshimath">Joshimath</option>
+                <option value="Almora">Almora</option>
+                <option value="Pithoragarh">Pithoragarh</option>
+                <option value="Tehri">Tehri</option>
+                <option value="Hemkund Sahib">Hemkund Sahib</option>
+                <option value="Gangotri">Gangotri</option>
+            </select>
+            <button id="fetchWeather">Get Weather Data</button>
+            <div id="weatherData">
+                <div id="currentWeather">Select a city and click "Get Weather Data"</div>
+            </div>
+        </div>
+
+        <!-- Landslide Prediction -->
+        <div class="card">
+            <h2>Landslide Prediction</h2>
+            <form id="predictionForm">
+                <label for="city">City:</label>
+                <select id="city" name="City" onchange="updateCityInfo()" required>
+                    <option value="">Select City</option>
+                    <option value="Dehradun">Dehradun</option>
+                    <option value="Mussoorie">Mussoorie</option>
+                    <option value="Haridwar">Haridwar</option>
+                    <option value="Rishikesh">Rishikesh</option>
+                    <option value="Kedarnath">Kedarnath</option>
+                    <option value="Badrinath">Badrinath</option>
+                    <option value="Joshimath">Joshimath</option>
+                    <option value="Almora">Almora</option>
+                    <option value="Pithoragarh">Pithoragarh</option>
+                    <option value="Tehri">Tehri</option>
+                    <option value="Hemkund Sahib">Hemkund Sahib</option>
+                    <option value="Gangotri">Gangotri</option>
+                </select><br><br>
+
+                <label for="elevation">Elevation (m):</label>
+                <input type="text" id="elevation" name="Elevation" readonly><br><br>
+                <label for="slope_gradient">Slope Gradient (°):</label>
+                <input type="text" id="slope_gradient" name="Slope Gradient" readonly><br><br>
+                <label for="vegetation_cover">Vegetation Cover (%):</label>
+                <input type="text" id="vegetation_cover" name="Vegetation Cover" readonly><br><br>
+                <label for="rainfall">Rainfall (mm):</label>
+                <input type="number" id="rainfall" name="Rainfall" required><br><br>
+                <label for="temperature">Temperature (°C):</label>
+                <input type="number" id="temperature" name="Temperature" required><br><br>
+                <label for="humidity">Humidity (%):</label>
+                <input type="number" id="humidity" name="Humidity" required><br><br>
+                <label for="soil_moisture">Soil Moisture (%):</label>
+                <input type="number" id="soil_moisture" name="Soil Moisture" readonly><br><br>
+                <label for="season">Season:</label>
+                <select id="season" name="Season" required>
+                    <option value="">Select Season</option>
+                    <option value="Winter">Winter</option>
+                    <option value="Pre-Monsoon">Pre-Monsoon</option>
+                    <option value="Monsoon">Monsoon</option>
+                    <option value="Post-Monsoon">Post-Monsoon</option>
+                </select><br><br>
+                <button type="button" onclick="predictLandslide()">Predict</button>
+            </form>
+            <h3 id="result"></h3>
+        </div>
+    </div>
+
+    <script>
+        // Weather Fetcher Script
+        const apiKey = '47723dc7677f448cb1f175025240511';
+
+        document.getElementById('fetchWeather').addEventListener('click', () => {
+            const location = document.getElementById('locationSelect').value;
+            if (!location) {
+                document.getElementById('currentWeather').innerHTML = `<strong>Error:</strong> Please select a city.`;
+                return;
+            }
+            const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${location}&days=3&aqi=no`;
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('City not found');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const currentTempC = data.current.temp_c;
+                    const currentHumidity = data.current.humidity;
+                    const currentWindSpeed = data.current.wind_kph;
+                    const forecasts = data.forecast.forecastday;
+                    let totalRainfall = 0;
+                    forecasts.forEach(forecast => {
+                        totalRainfall += forecast.day.totalprecip_mm;
+                    });
+                    const averageRainfall = (totalRainfall / forecasts.length).toFixed(2);
+                    document.getElementById('currentWeather').innerHTML = `
+                        <strong>Location:</strong> ${data.location.name}, ${data.location.country}<br>
+                        <strong>Current Temperature:</strong> ${currentTempC} °C<br>
+                        <strong>Current Humidity:</strong> ${currentHumidity}%<br>
+                        <strong>Current Wind Speed:</strong> ${currentWindSpeed} kph<br>
+                        <strong>3-Day Average Rainfall:</strong> ${averageRainfall} mm
+                    `;
+                })
+                .catch(error => {
+                    document.getElementById('currentWeather').innerHTML = `<strong>Error:</strong> ${error.message}`;
+                });
+        });
+
+        // City-specific data
+        const cityData = {
+            'Dehradun': { 'Elevation': 640, 'Slope Gradient': 5, 'Vegetation Cover': 40 },
+            'Mussoorie': { 'Elevation': 2005, 'Slope Gradient': 15, 'Vegetation Cover': 65 },
+            'Haridwar': { 'Elevation': 300, 'Slope Gradient': 4, 'Vegetation Cover': 30 },
+            'Rishikesh': { 'Elevation': 360, 'Slope Gradient': 6, 'Vegetation Cover': 35 },
+            'Kedarnath': { 'Elevation': 3584, 'Slope Gradient': 25, 'Vegetation Cover': 70 },
+            'Badrinath': { 'Elevation': 3133, 'Slope Gradient': 20, 'Vegetation Cover': 55 },
+            'Joshimath': { 'Elevation': 1890, 'Slope Gradient': 12, 'Vegetation Cover': 45 },
+            'Almora': { 'Elevation': 1642, 'Slope Gradient': 10, 'Vegetation Cover': 50 },
+            'Pithoragarh': { 'Elevation': 1627, 'Slope Gradient': 14, 'Vegetation Cover': 55 },
+            'Tehri': { 'Elevation': 1550, 'Slope Gradient': 8, 'Vegetation Cover': 60 },
+            'Hemkund Sahib': { 'Elevation': 4636, 'Slope Gradient': 30, 'Vegetation Cover': 75 },
+            'Gangotri': { 'Elevation': 3048, 'Slope Gradient': 22, 'Vegetation Cover': 68 },
+        };
+
+        function updateCityInfo() {
+            const city = document.getElementById('city').value;
+            if (cityData[city]) {
+                document.getElementById('elevation').value = cityData[city]['Elevation'];
+                document.getElementById('slope_gradient').value = cityData[city]['Slope Gradient'];
+                document.getElementById('vegetation_cover').value = cityData[city]['Vegetation Cover'];
+            } else {
+                document.getElementById('elevation').value = '';
+                document.getElementById('slope_gradient').value = '';
+                document.getElementById('vegetation_cover').value = '';
+            }
+            updateSoilMoisture();
+        }
+
+        function updateSoilMoisture() {
+            const rainfall = parseFloat(document.getElementById('rainfall').value) || 0;
+            const temperature = parseFloat(document.getElementById('temperature').value) || 0;
+            const humidity = parseFloat(document.getElementById('humidity').value) || 0;
+            const season = document.getElementById('season').value;
+
+            let baseline = season === "Monsoon" ? 70 : season === "Post-Monsoon" ? 50 : season === "Pre-Monsoon" ? 40 : 30;
+
+            const soilMoisture = Math.min(100, Math.max(0, baseline + rainfall * 0.2 - temperature * 0.3 + humidity * 0.4));
+            document.getElementById('soil_moisture').value = soilMoisture.toFixed(1);
+        }
+
+        function predictLandslide() {
+    const rainfall = parseFloat(document.getElementById('rainfall').value) || 0;
+    const humidity = parseFloat(document.getElementById('humidity').value) || 0;
+    const soilMoisture = parseFloat(document.getElementById('soil_moisture').value) || 0;
+    const season = document.getElementById('season').value;
+
+    const highRisk = rainfall >= 100 || humidity >= 80 || soilMoisture >= 60 || season === "Monsoon";
+
+    // Update the result message
+    document.getElementById('result').innerHTML = highRisk 
+        ? `<strong>Landslide Warning:</strong> High risk of landslide!`
+        : `<strong>All Clear:</strong> Low risk of landslide.`;
+    document.getElementById('result').style.color = highRisk ? 'red' : 'green';
+
+    // Change background color with a smooth transition
+    const body = document.body;
+    body.style.transition = "background-color 3s ease"; // Add smooth transition
+    body.style.backgroundColor = highRisk ?  "#D32F2F" : "#88cc88"; // Light red or light green
+}
+
+    </script>
+</body>
+</html>
