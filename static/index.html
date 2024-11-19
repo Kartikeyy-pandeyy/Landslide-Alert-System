@@ -6,173 +6,128 @@
     <title>Weather and Landslide Prediction</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     
-    <style>/* General Body Styles */
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f4f7fc; /* Soft background color */
-            color: #333; /* Dark text color for better readability */
-            padding: 40px 20px;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh; /* Ensures full-height */
-            padding: 20px;
+    <style>body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f4f7fc;
+        color: #333;
+        padding: 20px;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: 700;
+    }
+
+    .container {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+        max-width: 1200px;
+        width: 100%;
+    }
+
+    .card {
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        width: 450px;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    select, button, input {
+        padding: 10px;
+        width: 90%;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: 1px solid #0072ff;
+        font-size: 16px;
+    }
+
+    button {
+        background-color: #0072ff;
+        color: #fff;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #005bb5;
+    }
+
+    #result {
+        font-size: 18px;
+        margin-top: 20px;
+    }
+
+    footer {
+        font-size: 0.9rem;
+        color: #777;
+        text-align: center;
+        padding: 10px 0;
+        margin-top: auto;
+    }
+    #city{
+        margin: 10px;
+    }
+    button:hover {
+            background-color: #005bb5;
         }
-        
-        /* Header Styles */
-        h1 {
-            font-size: 3rem;
-            color: #333;
-            text-align: center;
-            margin: 20px 0;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-        
-        /* Main Content Layout */
-        .container {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-            width: 100%;
-            max-width: 1200px; /* Restricts max width */
+        #result {
             margin-top: 20px;
-            flex-grow: 1;
+            font-size: 1.2rem;
         }
-        
-        /* Card Styles */
-        .card {
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-            padding: 25px;
-            width: 450px;
-            margin: 20px;
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
-        }
-        
-        /* Input, Select, and Button Styles */
-        select, button, input {
-            padding: 12px;
-            width: 90%;
-            margin: 10px 0;
-            border-radius: 8px;
-            border: 1px solid #0072ff;
-            background-color: #fff;
-            font-size: 16px;
-        }
-        
-        select {
-            width: 95%;
-        }
-        
-        /* Button Styles */
-        button {
-            background-color: #0072ff; /* Primary color */
-            color: #fff;
-            cursor: pointer;
-            padding: 12px;
-            width: 90%;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-        
-        button:hover {
-            background-color: #005bb5; /* Darker shade on hover */
-        }
-        
-        input:focus, select:focus, button:focus {
-            border-color: #005bb5;
-            outline: none;
-        }
-        
-        /* Weather Data and Result */
-        #weatherData, #result {
-            font-size: 18px;
-            margin-top: 20px;
-        }
-        
-        /* Footer Styles */
-        footer {
-            font-size: 0.9rem;
-            color: #777;
-            text-align: center;
-            padding: 15px 0;
-            width: 100%;
-            background-color: #fff;
-            position: relative;
-            bottom: 0;
-            margin-top: auto; /* Ensures footer stays at the bottom */
-        }
-        
-        /* Popup Modal Styles */
         .popup-modal {
-            display: none; /* Hidden by default */
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5); /* Background dimming */
+            background-color: rgba(0, 0, 0, 0.6);
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
-        
         .popup-content {
             background-color: #fff;
             padding: 30px;
             border-radius: 8px;
-            width: 400px;
             text-align: center;
-            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
-        
-        .popup-content h3 {
-            font-size: 18px;
-            margin-bottom: 20px;
-        }
-        
-        .popup-content label {
-            font-size: 14px;
-            margin-bottom: 8px;
-            display: block;
-        }
-        
-        .popup-content input, .popup-content textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-        
         .popup-content button {
-            background-color: #0072ff;
+            background-color: red;
             color: white;
+            padding: 12px;
+            margin-top: 20px;
             border: none;
-            padding: 12px 20px;
             border-radius: 5px;
-            cursor: pointer;
         }
-        
         .popup-content button:hover {
-            background-color: #005bb5;
+            background-color: darkred;
         }
-        
         .close-btn {
             position: absolute;
             top: 10px;
-            right: 10px;
-            font-size: 20px;
+            right: 20px;
+            font-size: 18px;
             cursor: pointer;
         }
         </style>
@@ -254,6 +209,15 @@
             <h3 id="result"></h3>
         </div>
     </div>
+    <div class="popup-modal" id="popupModal">
+        <div class="popup-content">
+            <span class="close-btn" onclick="closePopup()">×</span>
+            <h3>High Risk of Landslide Detected!</h3>
+            <p>If you are in danger, click the button below for emergency assistance.</p>
+            <button onclick="redirectToEmergency()">Click Here for Emergency</button>
+        </div>
+    </div>
+
 
     <footer>
         &copy; 2024 Landslide Alert System. All rights reserved.
@@ -359,7 +323,24 @@
     const body = document.body;
     body.style.transition = "background-color 3s ease"; // Add smooth transition
     body.style.backgroundColor = highRisk ?  "#D32F2F" : "#88cc88"; // Light red or light green
+    if (highRisk) {
+                showPopup();
+            }
         }
+
+        function showPopup() {
+            document.getElementById('popupModal').style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('popupModal').style.display = 'none';
+        }
+
+        function redirectToEmergency() {
+            window.location.href = "assis.html"; // Replace with the path to your emergency page
+        }
+  
+
     </script>
 
 </body>
